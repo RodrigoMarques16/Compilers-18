@@ -33,6 +33,7 @@ Node* append_decl(Node* node, Node* list) {
 }
 
 void print_decl(Node* node, int indent) {
+    dbgprintf("Declaration: ");
     switch(node->kind.decl) {
         case DECL_FUNCTION: {
             print_decl_function(node, indent);

@@ -10,10 +10,13 @@
 %token MAIN READ WRITE
 
 // Operator associativity & precedence
+%left ASSIGN
 %left PLUS MINUS
 %left MULT DIV MOD
-%left PAR_OPEN PAR_CLOSE
-%left BRACKET_CLOSE BRACKET_OPEN
+%left PAR_OPEN 
+%left PAR_CLOSE
+%left BRACKET_CLOSE 
+%left BRACKET_OPEN
 %right IF ELSE
 
 // Root-level grammar symbol

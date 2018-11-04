@@ -86,6 +86,7 @@ void print_stmt(Node* node, int indent) {
             }
             case STMT_DECL: {
                 doIndent(indent);
+                dbgprintf("Declaration: ");
                 print_decl_var(node, indent);
                 printf(";\n");
                 break;

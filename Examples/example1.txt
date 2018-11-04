@@ -1,13 +1,15 @@
 int main() { 
     int x;
+    float y;
     scanf(x);
     if (true == false) {
         if (x > 5) {
             x = x + 5;
         }
     } else {
-        while(x) {
-            x + 5;
+        while(x < 5) {
+            x = x - 5;
+            y = y + 0.1;
         }
     }
     printf(y);
