@@ -1542,7 +1542,7 @@ yyreduce:
 
   case 48:
 #line 147 "parser.bison" /* yacc.c:1646  */
-    { /* make var expr*/ }
+    { make_expr_var((yyvsp[0].stringValue)); }
 #line 1547 "parser.c" /* yacc.c:1646  */
     break;
 

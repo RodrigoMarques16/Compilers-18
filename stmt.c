@@ -9,7 +9,7 @@ Node* append_stmt(Node* node, Node* list) {
     return temp;
 }
 
-Node* make_stmt(stmt_t kind, Type* type, char* name, Expr* expr, 
+Node* make_stmt(stmt_t kind, Type* type, Expr* expr, 
                 Node* body, Node* else_body, Node* next) {
     Node* node = (Node*) malloc(sizeof(Node));
     node->type = type;
@@ -23,33 +23,34 @@ Node* make_stmt(stmt_t kind, Type* type, char* name, Expr* expr,
 }
 
 Node* make_stmt_block(Node* body) {
-    return make_stmt(STMT_BLOCK, NULL, NULL, NULL, body, NULL, NULL);
+    return make_stmt(STMT_BLOCK, NULL, NULL, body, NULL, NULL);
 }
 
 Node* make_stmt_assign(char* name, Expr* expr) {
-    return make_stmt(STMT_ASSIGN, NULL, name, expr, NULL, NULL, NULL);
+    /* make assignments binary expressions */
+    return make_stmt(STMT_ASSIGN, NULL, expr, NULL, NULL, NULL);
 }
 
 Node* make_stmt_decl(Node* decl) {
-    return make_stmt(STMT_DECL, decl->type, decl->attr->name, NULL, NULL, NULL, NULL);
+    return make_stmt(STMT_DECL, decl->type, decl->attr, NULL, NULL, NULL);
 }
 
 Node* make_stmt_while(Expr* expr, Node* body) {
-    return make_stmt(STMT_WHILE, NULL, NULL, expr, body, NULL, NULL);
+    return make_stmt(STMT_WHILE, NULL, expr, body, NULL, NULL);
 }
 
 Node* make_stmt_return(Expr* expr) {
     // type checking
-    return make_stmt(STMT_RETURN, NULL, NULL, expr, NULL, NULL, NULL);
+    return make_stmt(STMT_RETURN, NULL, expr, NULL, NULL, NULL);
 }
 
 Node* make_stmt_ifelse(Expr* expr, Node* body, Node* else_body) {
-    return make_stmt(STMT_IFELSE, NULL, NULL, expr, body, else_body, NULL);
+    return make_stmt(STMT_IFELSE, NULL, expr, body, else_body, NULL);
 }
 
 Node* make_stmt_io(stmt_t kind, Expr* expr) {
     // use param list for args
-    return make_stmt(kind, NULL, NULL, NULL, NULL, NULL, NULL);
+    return make_stmt(kind, NULL, NULL, NULL, NULL, NULL);
 }
 
 Node* make_stmt_expr(Expr* expr) {
@@ -69,7 +70,7 @@ void print_stmt(Node* node, int indent) {
         if (node->nodekind == K_EXPR) {
             // Special case for expression statements
             doIndent(indent);
-            print_expr(node);
+            print_expr(node->attr);
             printf(";\n");
             node = node->next;
             continue;
@@ -109,7 +110,7 @@ void print_stmt(Node* node, int indent) {
             case STMT_IFELSE: {
                 doIndent(indent);
                 printf("if (");
-                // print expr
+                print_expr(node->attr);
                 printf(") {\n");
                 print_stmt(node->body, indent+1);
                 doIndent(indent);

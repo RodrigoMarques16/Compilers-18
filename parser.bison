@@ -40,8 +40,8 @@
 %type <nodeValue>  program decl-list decl fun-decl var-decl
 %type <nodeValue>  statement statement-list compound-stmt
 %type <nodeValue>  expr-stmt assign-stmt while-stmt return-stmt ifelse-stmt 
-%type <exprValue>  expr arith-expr rel-expr var constant
-%type <nodeValue>  read-stmt write-stmt call
+%type <exprValue>  expr arith-expr rel-expr var constant call
+%type <nodeValue>  read-stmt write-stmt
 %type <typeValue>  type
 %type <paramValue> param-list params param
 
@@ -144,7 +144,7 @@ constant: TK_INT    { $$ = make_int_literal($1);   }
        | TK_FLOAT   { $$ = make_float_literal($1); }
        | TK_BOOLEAN { $$ = make_bool_literal($1);  }
 ;
-var: ID { /* make var expr*/ }
+var: ID { make_expr_var($1); }
 ;
 rel-expr: expr rel-op expr { /* make binary bool expr*/ }
 ;

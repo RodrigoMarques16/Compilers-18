@@ -2,10 +2,11 @@
 
 Node* make_decl(decl_t kind, Type* type, char* name, Node* body) {
     Node* node = (Node*) malloc(sizeof(Node));
+    node->attr = (Expr*) malloc(sizeof(Expr));
     node->nodekind = 2;
     node->kind.decl = kind;
     node->type = type;
-    node->attr.name = name;
+    node->attr->name = name;
     node->body = body;
     node->next = NULL;
     return node;
@@ -45,13 +46,13 @@ void print_decl(Node* node, int indent) {
 }
 
 void print_decl_function(Node* node, int indent) {
-    printf("%s: ", node->attr.name);
+    printf("%s: ", node->attr->name);
     print_type(node->type);
     printf(" ");
     print_stmt(node->body, indent);
 }
 
 void print_decl_var(Node* node, int indent) {
-    printf("%s: ", node->attr.name);
+    printf("%s: ", node->attr->name);
     print_type(node->type);
 }

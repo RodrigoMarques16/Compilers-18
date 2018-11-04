@@ -29,11 +29,21 @@ typedef union {
 
 // AST node
 typedef struct _Node {
-    Type* type;
-    // merge nodekind with kind?
-    node_t nodekind;    
-    node_k kind;
-    //Expr attr;
+    Type*  type;             // unecessary but code isn't updated yet
+    node_t nodekind;         // merge nodekind with kind?
+    node_k kind;             
+    Expr*  attr;             // Value, id and expressions
+    struct _Node* body;      // For compound, loop, if-else
+    struct _Node* else_body; // For if-else
+    struct _Node* next;      // Next in sequence
+} Node;
+
+void doIndent(int indent);
+void printTree(Node* node);
+
+#endif
+
+//Expr attr;
     /*union {
         Constant val;
         char* name; // for variables
@@ -43,13 +53,3 @@ typedef struct _Node {
             struct _Node* right;
         } op; // for binary expressions
     } attr;*/
-    Expr* attr;
-    struct _Node* body;      // Comound, Loop, ifelse
-    struct _Node* else_body; // ifelse
-    struct _Node* next;      // Next in sequence
-} Node;
-
-void doIndent(int indent);
-void printTree(Node* node);
-
-#endif

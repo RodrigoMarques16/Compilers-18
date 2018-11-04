@@ -1,2 +1,8 @@
 int main() { 
+    int x;
+    if (true) {
+        x;
+    } else {
+
+    }
 }

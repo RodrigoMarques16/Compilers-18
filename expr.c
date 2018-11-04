@@ -36,24 +36,24 @@ Expr* make_bool_literal(boolean value) {
     return make_literal(T_BOOL, val);
 }
 
-Node* make_expr_var(char* name) {
-    Node* node = (Node*) malloc(sizeof(Node));
-    node->attr->name = name;
-    return node;
+Expr* make_expr_var(char* name) {
+    Type*    type = NULL;
+    Constant val;         
+    return make_expr(EXPR_ID, type, name, val, -1, NULL, NULL);
 }
 
-void print_literal(Node* node) {
-    switch(node->type->kind) {
+void print_literal(Expr* expr) {
+    switch(expr->type->kind) {
         case T_INTEGER: {
-            printf("%d", node->attr->val.int_value);
+            printf("%d", expr->val.int_value);
             break;
         }
         case T_FLOAT: {
-            printf("%f", node->attr->val.float_value);
+            printf("%f", expr->val.float_value);
             break;
         }
         case T_BOOL: {
-            if (node->attr->val.bool_value)
+            if (expr->val.bool_value)
                 printf("TRUE");
             else printf("FALSE");
             break;
@@ -61,10 +61,14 @@ void print_literal(Node* node) {
     }
 }
 
-void print_expr(Node* node) {
-    switch(node->kind.expr) {
+void print_expr(Expr* expr) {
+    switch(expr->kind) {
         case EXPR_CONSTANT: {
-            print_literal(node);
+            print_literal(expr);
+            break;
+        }
+        case EXPR_ID: {
+            printf("%s", expr->name);
             break;
         }
     }

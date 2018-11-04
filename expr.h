@@ -37,7 +37,8 @@ Expr* make_literal(type_t type, Constant val);
 Expr* make_int_literal(int value);
 Expr* make_float_literal(float value);
 Expr* make_bool_literal(boolean value); 
-void print_expr(Node* node);
-void print_literal(Node* node);
+Expr* make_expr_var(char* name);
+void print_expr(Expr* expr);
+void print_literal(Expr* expr);
 
 #endif
