@@ -46,13 +46,13 @@ void print_decl(Node* node, int indent) {
 }
 
 void print_decl_function(Node* node, int indent) {
-    printf("%s: ", node->attr->name);
+    printf("function %s: ", node->attr->name);
     print_type(node->type);
     printf(" ");
     print_stmt(node->body, indent);
 }
 
 void print_decl_var(Node* node, int indent) {
-    printf("%s: ", node->attr->name);
+    printf("var %s: ", node->attr->name);
     print_type(node->type);
 }

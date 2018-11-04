@@ -11,9 +11,11 @@ typedef struct _Node Node;
 #include "expr.h"
 #include "decl.h"
 #include "stmt.h"
+#include "parser.h"
 
-#define MAXCHILDREN 3
 #define INDENT_CHAR '-'
+#define DEBUG_ENABLED 0
+#define dbgprintf(...) if (DEBUG_ENABLED) {printf(__VA_ARGS__);}
 
 typedef enum { 
     K_EXPR, 
@@ -40,6 +42,7 @@ typedef struct _Node {
 
 void doIndent(int indent);
 void printTree(Node* node);
+void printOperator(int opcode);
 
 #endif
 

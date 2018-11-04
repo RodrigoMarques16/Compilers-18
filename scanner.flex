@@ -17,18 +17,18 @@ int yyline = 1;
 
 #.*\n|\/\/.*\n {} // comments
 
-"+"  { yylval.charValue = yytext[0]; return PLUS;   }
-"-"  { yylval.charValue = yytext[0]; return MINUS;  }
-"*"  { yylval.charValue = yytext[0]; return MULT;   }
-"/"  { yylval.charValue = yytext[0]; return DIV;    }
-"\%" { yylval.charValue = yytext[0]; return MOD;    } 
-"="  { yylval.charValue = yytext[0]; return ASSIGN; }
-"==" { yylval.charValue = yytext[0]; return EQ;     }
-"!=" { yylval.charValue = yytext[0]; return DIF;    }
-"<"  { yylval.charValue = yytext[0]; return LT;     }
-"<=" { yylval.charValue = yytext[0]; return LTE;    } 
-">"  { yylval.charValue = yytext[0]; return GT;     }
-">=" { yylval.charValue = yytext[0]; return GTE;    }
+"+"  { return PLUS;   }
+"-"  { return MINUS;  }
+"*"  { return MULT;   }
+"/"  { return DIV;    }
+"\%" { return MOD;    } 
+"="  { return ASSIGN; }
+"==" { return EQ;     }
+"!=" { return DIF;    }
+"<"  { return LT;     }
+"<=" { return LTE;    } 
+">"  { return GT;     }
+">=" { return GTE;    }
 
 "("  { return PAR_OPEN; }
 ")"  { return PAR_CLOSE; }

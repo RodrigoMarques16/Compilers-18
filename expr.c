@@ -37,41 +37,74 @@ Expr* make_bool_literal(boolean value) {
 }
 
 Expr* make_expr_var(char* name) {
-    Type*    type = NULL;
+    Type* type = NULL;  /* later */
     Constant val;         
     return make_expr(EXPR_ID, type, name, val, -1, NULL, NULL);
+}
+
+Expr* make_expr_relational(int op, Expr* left, Expr* right) {
+    Type* type = make_type_simple(T_BOOL);
+    Constant val; /* later */  
+    return make_expr(EXPR_RELATIONAL, type, NULL, val, op, left, right);
+}
+
+Expr* make_expr_arithmetic(int op, Expr* left, Expr* right) {
+    Type* type = left->type; 
+    Constant val; /* later */  
+    return make_expr(EXPR_ARITHMETIC, type, NULL, val, op, left, right);
+}
+
+Expr* make_expr_assign(int op, Expr* left, Expr* right) {
+    Type* type = make_type_simple(T_VOID); 
+    Constant val; /* later */  
+    return make_expr(EXPR_ASSIGN, type, NULL, val, op, left, right);
 }
 
 void print_literal(Expr* expr) {
     switch(expr->type->kind) {
         case T_INTEGER: {
+            dbgprintf("(T_INTEGER: ")
             printf("%d", expr->val.int_value);
             break;
         }
         case T_FLOAT: {
+            dbgprintf("(T_FLOAT: Value:");
             printf("%f", expr->val.float_value);
             break;
         }
         case T_BOOL: {
+            dbgprintf("(T_BOOL: Value = ");
             if (expr->val.bool_value)
                 printf("TRUE");
             else printf("FALSE");
             break;
         }
     }
+    dbgprintf(")");
 }
 
 void print_expr(Expr* expr) {
+    dbgprintf("(Expression: ");
     switch(expr->kind) {
         case EXPR_CONSTANT: {
             print_literal(expr);
             break;
         }
         case EXPR_ID: {
-            printf("%s", expr->name);
+            printf("(var: %s)", expr->name);
+            break;
+        }
+        case EXPR_RELATIONAL: 
+        case EXPR_ARITHMETIC: {
+            print_expr(expr->left);
+            printf(" ");
+            printOperator(expr->op);
+            printf(" ");
+            print_expr(expr->right);
             break;
         }
     }
+    dbgprintf(")");
 }
 
 /*

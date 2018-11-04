@@ -7,12 +7,14 @@ typedef enum {
   EXPR_ID,
   EXPR_CONSTANT,
   EXPR_ARITHMETIC,
-  EXPR_RELATIONAL
+  EXPR_RELATIONAL,
+  EXPR_ASSIGN
 } expr_t;
 
 typedef struct _Expr Expr;
 
 #include "ast.h"
+#include "parser.h"
 
 typedef struct _Expr {
     expr_t kind;    
@@ -33,11 +35,16 @@ Node* make_bool_literal(boolean value);
 */ 
 Expr* make_expr(expr_t kind, Type* type, char* name, Constant val, 
                 int op, Expr* left, Expr* right);
+                
 Expr* make_literal(type_t type, Constant val);
 Expr* make_int_literal(int value);
 Expr* make_float_literal(float value);
 Expr* make_bool_literal(boolean value); 
 Expr* make_expr_var(char* name);
+Expr* make_expr_relational(int op, Expr* left, Expr* right);
+Expr* make_expr_arithmetic(int op, Expr* left, Expr* right);
+Expr* make_expr_assign(int op, Expr* left, Expr* right);
+
 void print_expr(Expr* expr);
 void print_literal(Expr* expr);
 

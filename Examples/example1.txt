@@ -1,8 +1,21 @@
 int main() { 
     int x;
-    if (true) {
-        x;
+    scanf(x);
+    if (true == false) {
+        if (x > 5) {
+            x = x + 5;
+        }
     } else {
-
+        while(x) {
+            x + 5;
+        }
     }
+    printf(y);
+    return 0;
 }
+
+int foo(int x) {
+    float z, y;
+    z = 5;
+}
+

@@ -26,7 +26,7 @@ Node* make_stmt_block(Node* body) {
     return make_stmt(STMT_BLOCK, NULL, NULL, body, NULL, NULL);
 }
 
-Node* make_stmt_assign(char* name, Expr* expr) {
+Node* make_stmt_assign(Expr* expr) {
     /* make assignments binary expressions */
     return make_stmt(STMT_ASSIGN, NULL, expr, NULL, NULL, NULL);
 }
@@ -50,7 +50,7 @@ Node* make_stmt_ifelse(Expr* expr, Node* body, Node* else_body) {
 
 Node* make_stmt_io(stmt_t kind, Expr* expr) {
     // use param list for args
-    return make_stmt(kind, NULL, NULL, NULL, NULL, NULL);
+    return make_stmt(kind, NULL, expr, NULL, NULL, NULL);
 }
 
 Node* make_stmt_expr(Expr* expr) {
@@ -93,7 +93,7 @@ void print_stmt(Node* node, int indent) {
             case STMT_WHILE: {
                 doIndent(indent);
                 printf("while (");
-                // print expr
+                print_expr(node->attr);
                 printf(") {\n");
                 print_stmt(node->body, indent+1);
                 doIndent(indent);
@@ -103,7 +103,7 @@ void print_stmt(Node* node, int indent) {
             case STMT_RETURN: {
                 doIndent(indent);
                 printf("return ", node->attr->name);
-                // print expr
+                print_expr(node->attr);
                 printf(";\n");
                 break;
             }
@@ -127,15 +127,23 @@ void print_stmt(Node* node, int indent) {
             case STMT_READ: {
                 doIndent(indent);
                 printf("READ: ");
-                // print expr
+                print_expr(node->attr);
                 printf("\n");
                 break;
             }
             case STMT_WRITE: {
                 doIndent(indent);
                 printf("WRITE: ");
-                // print expr
+                print_expr(node->attr);
                 printf("\n");
+                break;
+            }
+            case STMT_ASSIGN: {
+                doIndent(indent);
+                print_expr(node->attr->left);
+                printf(" = ");
+                print_expr(node->attr->right);
+                printf(";\n");
                 break;
             }
         }

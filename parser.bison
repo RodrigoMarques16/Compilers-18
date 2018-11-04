@@ -2,7 +2,7 @@
 %token <stringValue> ID
 %token TK_INT TK_FLOAT TK_BOOLEAN
 %token TYPE_INT TYPE_FLOAT TYPE_BOOLEAN
-%token <charValue> ASSIGN PLUS MINUS MULT DIV MOD EQ DIF LT LTE GT GTE
+%token ASSIGN PLUS MINUS MULT DIV MOD EQ DIF LT LTE GT GTE
 %token IF THEN ELSE WHILE RETURN
 %token PAR_OPEN PAR_CLOSE RECT_OPEN RECT_CLOSE BRACKET_OPEN BRACKET_CLOSE
 %token SEMI COMMA
@@ -13,9 +13,8 @@
 %left PLUS MINUS
 %left MULT DIV MOD
 %left PAR_OPEN PAR_CLOSE
-%left BRACKET_CLOSE
-%right BRACKET_OPEN ELSE
-%nonassoc ASSIGN
+%left BRACKET_CLOSE BRACKET_OPEN
+%right IF ELSE
 
 // Root-level grammar symbol
 %start program;
@@ -36,11 +35,11 @@
 %type <intValue>   TK_INT
 %type <floatValue> TK_FLOAT
 %type <boolValue>  TK_BOOLEAN
-%type <charValue>  arith-op rel-op
-%type <nodeValue>  program decl-list decl fun-decl var-decl
+%type <intValue>   rel-op arith-op
+%type <nodeValue>  program decl-list decl fun-decl var-decl var-list
 %type <nodeValue>  statement statement-list compound-stmt
-%type <nodeValue>  expr-stmt assign-stmt while-stmt return-stmt ifelse-stmt 
-%type <exprValue>  expr arith-expr rel-expr var constant call
+%type <nodeValue>  expr-stmt while-stmt return-stmt ifelse-stmt 
+%type <exprValue>  expr arith-expr rel-expr var constant call assign-stmt
 %type <nodeValue>  read-stmt write-stmt
 %type <typeValue>  type
 %type <paramValue> param-list params param
@@ -73,7 +72,7 @@ decl-list: { $$ = NULL; }
 decl: var-decl 
     | fun-decl 
 ;
-var-decl: type ID SEMI { 
+var-decl: type var-list SEMI { 
     $$ = make_decl_var($1, $2);
 }
 ;
@@ -98,7 +97,7 @@ statement-list: { $$ = NULL; }
               | statement-list statement { $$ = append_stmt($2, $1); }
 ;
 statement: expr-stmt
-         | assign-stmt 
+         | assign-stmt { $$ = make_stmt_assign($1); }
          | compound-stmt
          | while-stmt
          | return-stmt
@@ -112,7 +111,7 @@ compound-stmt: BRACKET_OPEN statement-list BRACKET_CLOSE
                 { $$ = make_stmt_block($2); }
 ;
 assign-stmt: ID ASSIGN expr SEMI 
-                { $$ = make_stmt_assign($1, $3); }
+                { $$ = make_expr_assign(ASSIGN, make_expr_var($1), $3); }
 ;
 while-stmt: WHILE PAR_OPEN expr PAR_CLOSE statement
                 { $$ = make_stmt_while($3, $5); }
@@ -134,34 +133,34 @@ write-stmt: WRITE PAR_OPEN expr PAR_CLOSE SEMI
 expr-stmt: expr SEMI { $$ = make_stmt_expr($1); }
 ;
 expr: constant 
-  | var 
-  | rel-expr 
-  | arith-expr 
-  | PAR_OPEN expr PAR_CLOSE { $$ = $2; }
-  | call
+    | var 
+    | rel-expr 
+    | arith-expr 
+    | PAR_OPEN expr PAR_CLOSE { $$ = $2; }
+    | call
 ;
 constant: TK_INT    { $$ = make_int_literal($1);   }
-       | TK_FLOAT   { $$ = make_float_literal($1); }
-       | TK_BOOLEAN { $$ = make_bool_literal($1);  }
+        | TK_FLOAT   { $$ = make_float_literal($1); }
+        | TK_BOOLEAN { $$ = make_bool_literal($1);  }
 ;
-var: ID { make_expr_var($1); }
+var: ID { $$ = make_expr_var($1); }
 ;
-rel-expr: expr rel-op expr { /* make binary bool expr*/ }
+rel-expr: expr rel-op expr { $$ = make_expr_relational($2, $1, $3); }
 ;
-rel-op: EQ
-      | DIF
-      | LT
-      | LTE
-      | GT
-      | GTE
+rel-op: EQ  { $$ = EQ;  }
+      | DIF { $$ = DIF; }
+      | LT  { $$ = LT;  }
+      | LTE { $$ = LTE; }
+      | GT  { $$ = GT;  }
+      | GTE { $$ = GTE; }
 ;
-arith-expr: expr arith-op expr { /* make binarry arith expr*/ }
+arith-expr: expr arith-op expr { $$ = make_expr_arithmetic($2, $1, $3); }
 ;
-arith-op: PLUS
-       | MINUS
-       | MULT
-       | DIV
-       | MOD
+arith-op: PLUS  { $$ = PLUS;  }
+        | MINUS { $$ = MINUS; }
+        | MULT  { $$ = MULT;  }
+        | DIV   { $$ = DIV;   }
+        | MOD   { $$ = MOD;   }
 ;
 call: ID PAR_OPEN args PAR_CLOSE { /* todo */ }
 ;

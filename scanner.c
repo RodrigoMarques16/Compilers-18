@@ -811,62 +811,62 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 #line 20 "scanner.flex"
-{ yylval.charValue = yytext[0]; return PLUS;   }
+{ return PLUS;   }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 21 "scanner.flex"
-{ yylval.charValue = yytext[0]; return MINUS;  }
+{ return MINUS;  }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 22 "scanner.flex"
-{ yylval.charValue = yytext[0]; return MULT;   }
+{ return MULT;   }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 23 "scanner.flex"
-{ yylval.charValue = yytext[0]; return DIV;    }
+{ return DIV;    }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 24 "scanner.flex"
-{ yylval.charValue = yytext[0]; return MOD;    } 
+{ return MOD;    } 
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 25 "scanner.flex"
-{ yylval.charValue = yytext[0]; return ASSIGN; }
+{ return ASSIGN; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 26 "scanner.flex"
-{ yylval.charValue = yytext[0]; return EQ;     }
+{ return EQ;     }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 27 "scanner.flex"
-{ yylval.charValue = yytext[0]; return DIF;    }
+{ return DIF;    }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 28 "scanner.flex"
-{ yylval.charValue = yytext[0]; return LT;     }
+{ return LT;     }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 29 "scanner.flex"
-{ yylval.charValue = yytext[0]; return LTE;    } 
+{ return LTE;    } 
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 30 "scanner.flex"
-{ yylval.charValue = yytext[0]; return GT;     }
+{ return GT;     }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 31 "scanner.flex"
-{ yylval.charValue = yytext[0]; return GTE;    }
+{ return GTE;    }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP

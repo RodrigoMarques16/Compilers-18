@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 50 "parser.bison" /* yacc.c:1909  */
+#line 49 "parser.bison" /* yacc.c:1909  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -105,7 +105,7 @@ Node* root;
 
 union YYSTYPE
 {
-#line 24 "parser.bison" /* yacc.c:1909  */
+#line 23 "parser.bison" /* yacc.c:1909  */
 
     int intValue;
     int boolValue;

@@ -43,7 +43,7 @@ void print_params(ParamList* params) {
 void print_type(Type* t) {
     switch(t->kind) {
         case T_FUNCTION: {
-            printf("function (");
+            printf("(");
             print_params(t->params);
             printf(") -> ");
             print_type(t->subtype);
@@ -51,6 +51,10 @@ void print_type(Type* t) {
         }
         case T_INTEGER: {
             printf("int");
+            break;
+        }
+        case T_FLOAT: {
+            printf("float");
             break;
         }
         case T_BOOL: {
