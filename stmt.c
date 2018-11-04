@@ -94,10 +94,10 @@ void print_stmt(Node* node, int indent) {
                 doIndent(indent);
                 printf("while (");
                 print_expr(node->attr);
-                printf(") {\n");
-                print_stmt(node->body, indent+1);
-                doIndent(indent);
-                printf("}\n");
+                printf(")\n");
+                print_stmt(node->body, indent);
+                //doIndent(indent);
+                //printf("}\n");
                 break;
             }
             case STMT_RETURN: {
@@ -111,16 +111,16 @@ void print_stmt(Node* node, int indent) {
                 doIndent(indent);
                 printf("if (");
                 print_expr(node->attr);
-                printf(") {\n");
-                print_stmt(node->body, indent+1);
-                doIndent(indent);
-                printf("}\n");
+                printf(")\n");
+                print_stmt(node->body, indent);
+                //doIndent(indent);
+                //printf("}\n");
                 if (node->else_body != NULL) {
                     doIndent(indent);
-                    printf("else {\n");
-                    print_stmt(node->else_body, indent+1);
-                    doIndent(indent);
-                    printf("}\n");
+                    printf("else\n");
+                    print_stmt(node->else_body, indent);
+                    //doIndent(indent);
+                    //printf("}\n");
                 }
                 break;
             }

@@ -15,7 +15,6 @@ int main() {
 }
 
 int foo(int x) {
-    float z, y;
-    z = 5;
+    int x, y;
 }
 

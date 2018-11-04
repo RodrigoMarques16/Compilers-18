@@ -36,13 +36,14 @@
 %type <floatValue> TK_FLOAT
 %type <boolValue>  TK_BOOLEAN
 %type <intValue>   rel-op arith-op
-%type <nodeValue>  program decl-list decl fun-decl var-decl var-list
+%type <nodeValue>  program decl-list decl fun-decl var-decl
 %type <nodeValue>  statement statement-list compound-stmt
 %type <nodeValue>  expr-stmt while-stmt return-stmt ifelse-stmt 
 %type <exprValue>  expr arith-expr rel-expr var constant call assign-stmt
 %type <nodeValue>  read-stmt write-stmt
 %type <typeValue>  type
 %type <paramValue> param-list params param
+%type <stringValue> var-list // temporary
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -72,13 +73,14 @@ decl-list: { $$ = NULL; }
 decl: var-decl 
     | fun-decl 
 ;
-var-decl: type var-list SEMI { 
-    $$ = make_decl_var($1, $2);
-}
+var-decl: type var-list SEMI 
+            { $$ = make_decl_var($1, $2); }
 ;
-fun-decl: type ID PAR_OPEN params PAR_CLOSE compound-stmt {
-    $$ = make_decl_function($1, $2, $4, $6);
-}
+var-list: ID COMMA var-list { /* not done */ }
+        | ID
+;
+fun-decl: type ID PAR_OPEN params PAR_CLOSE compound-stmt 
+            { $$ = make_decl_function($1, $2, $4, $6); }
 ;
 params: { $$ = NULL; }
       | param-list
