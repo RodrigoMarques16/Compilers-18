@@ -5,3 +5,7 @@ symbol.c
 symbol.h
 *.exe
 *.stackdump
+parser.c
+scanner.c
+parser.h
+

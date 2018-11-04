@@ -2,7 +2,7 @@
 %token <stringValue> ID
 %token INT FLOAT BOOLEAN
 %token TYPE_INT TYPE_FLOAT TYPE_BOOLEAN
-%token ASSIGN PLUS MINUS MULT DIV MOD EQ DIF LT LTE GT GTE
+%token <charValue> ASSIGN PLUS MINUS MULT DIV MOD EQ DIF LT LTE GT GTE
 %token IF THEN ELSE WHILE RETURN TRUE FALSE
 %token PAR_OPEN PAR_CLOSE RECT_OPEN RECT_CLOSE BRACKET_OPEN BRACKET_CLOSE
 %token SEMI COMMA
@@ -32,14 +32,17 @@
     ParamList* paramValue;
 }
 
-%type <intValue>   INT
-%type <floatValue> FLOAT
-%type <boolValue>  BOOLEAN
-%type <nodeValue>  program decl-list decl fun-decl var-decl
-%type <nodeValue>  expr statement statement-list compound-stmt
-%type <nodeValue>  assign-stmt while-stmt return-stmt ifelse-stmt read-stmt write-stmt
-%type <typeValue>  type
-%type <paramValue> param-list params param
+%type <intValue>    INT
+%type <floatValue>  FLOAT
+%type <boolValue>   BOOLEAN
+%type <charBoolean> arith-op rel-op
+%type <nodeValue>   program decl-list decl fun-decl var-decl
+%type <nodeValue>   statement statement-list compound-stmt
+%type <nodeValue>   expr-stmt assign-stmt while-stmt return-stmt ifelse-stmt 
+%type <nodeValue>   expr arith-expr rel-expr var constant
+%type <nodeValue>   read-stmt write-stmt call
+%type <typeValue>   type
+%type <paramValue>  param-list params param
 
 // Use "%code requires" to make declarations go
 // into both parser.c and parser.h
@@ -93,7 +96,8 @@ type: TYPE_INT     { $$ = make_type_simple(T_INTEGER); }
 statement-list: { $$ = NULL; }
               | statement-list statement { $$ = append_stmt($2, $1); }
 ;
-statement: assign-stmt 
+statement:  expr-stmt
+         |assign-stmt 
          | compound-stmt
          | while-stmt
          | return-stmt
@@ -126,7 +130,46 @@ read-stmt: READ PAR_OPEN expr PAR_CLOSE SEMI
 write-stmt: WRITE PAR_OPEN expr PAR_CLOSE SEMI 
                 { $$ = make_stmt_io(STMT_WRITE, $3); }
 ;
-expr: INT {}
+expr-stmt: expr SEMI
+;
+expr: constant 
+  | var 
+  | rel-expr 
+  | arith-expr 
+  | PAR_OPEN expr PAR_CLOSE { $$ = $2; }
+  | call
+;
+constant: INT  {}
+       | FLOAT {}
+       | TRUE  {}
+       | FALSE {}
+;
+var: ID {}
+;
+rel-expr: expr rel-op expr {}
+;
+rel-op: EQ  {}
+      | DIF {}
+      | LT  {}
+      | LTE {}
+      | GT  {}
+      | GTE {}
+;
+arith-expr: expr arith-op expr {}
+;
+arith-op: PLUS  {} 
+       | MINUS {}
+       | MULT  {}
+       | DIV   {}
+       | MOD   {}
+;
+call: ID PAR_OPEN args PAR_CLOSE {}
+;
+args: {}
+    | arg-list {}
+;
+arg-list: arg-list COMMA expr {}
+        | expr                {}
 ;
 %%
 
