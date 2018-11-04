@@ -1,4 +1,2 @@
 int main() { 
-    scanf(5);
-    printf(5);
 }

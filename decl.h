@@ -1,5 +1,5 @@
-#ifndef _DECL_H
-#define _DECL_H
+#ifndef __decl_h__
+#define __decl_h__
 
 typedef enum {
     DECL_VAR,

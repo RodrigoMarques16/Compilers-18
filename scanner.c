@@ -811,62 +811,62 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 #line 20 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return PLUS;   }
+{ yylval.charValue = yytext[0]; return PLUS;   }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 21 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return MINUS;  }
+{ yylval.charValue = yytext[0]; return MINUS;  }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 22 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return MULT;   }
+{ yylval.charValue = yytext[0]; return MULT;   }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 23 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return DIV;    }
+{ yylval.charValue = yytext[0]; return DIV;    }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 24 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return MOD;    } 
+{ yylval.charValue = yytext[0]; return MOD;    } 
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 25 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return ASSIGN; }
+{ yylval.charValue = yytext[0]; return ASSIGN; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 26 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return EQ;     }
+{ yylval.charValue = yytext[0]; return EQ;     }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 27 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return DIF;    }
+{ yylval.charValue = yytext[0]; return DIF;    }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 28 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return LT;     }
+{ yylval.charValue = yytext[0]; return LT;     }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 29 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return LTE;    } 
+{ yylval.charValue = yytext[0]; return LTE;    } 
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 30 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return GT;     }
+{ yylval.charValue = yytext[0]; return GT;     }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 31 "scanner.flex"
-{ yylval.stringValue = strdup(yytext); return GTE;    }
+{ yylval.charValue = yytext[0]; return GTE;    }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
@@ -973,7 +973,7 @@ YY_RULE_SETUP
 #line 55 "scanner.flex"
 { 
    yylval.intValue = atoi(yytext);  
-   return INT; 
+   return TK_INT; 
 }  // Integers
 	YY_BREAK
 case 37:
@@ -981,7 +981,7 @@ YY_RULE_SETUP
 #line 60 "scanner.flex"
 {
     yylval.floatValue = atof(yytext);
-    return FLOAT;
+    return TK_FLOAT;
 } // Floats
 	YY_BREAK
 case 38:
@@ -989,7 +989,7 @@ YY_RULE_SETUP
 #line 65 "scanner.flex"
 { 
     yylval.boolValue = 1;
-    return TRUE; 
+    return TK_BOOLEAN; 
 }
 	YY_BREAK
 case 39:
@@ -997,7 +997,7 @@ YY_RULE_SETUP
 #line 70 "scanner.flex"
 { 
     yylval.boolValue = 0;
-    return FALSE;        
+    return TK_BOOLEAN;        
 }
 	YY_BREAK
 case 40:

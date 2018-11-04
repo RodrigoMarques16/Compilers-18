@@ -17,18 +17,18 @@ int yyline = 1;
 
 #.*\n|\/\/.*\n {} // comments
 
-"+"  { yylval.stringValue = strdup(yytext); return PLUS;   }
-"-"  { yylval.stringValue = strdup(yytext); return MINUS;  }
-"*"  { yylval.stringValue = strdup(yytext); return MULT;   }
-"/"  { yylval.stringValue = strdup(yytext); return DIV;    }
-"\%" { yylval.stringValue = strdup(yytext); return MOD;    } 
-"="  { yylval.stringValue = strdup(yytext); return ASSIGN; }
-"==" { yylval.stringValue = strdup(yytext); return EQ;     }
-"!=" { yylval.stringValue = strdup(yytext); return DIF;    }
-"<"  { yylval.stringValue = strdup(yytext); return LT;     }
-"<=" { yylval.stringValue = strdup(yytext); return LTE;    } 
-">"  { yylval.stringValue = strdup(yytext); return GT;     }
-">=" { yylval.stringValue = strdup(yytext); return GTE;    }
+"+"  { yylval.charValue = yytext[0]; return PLUS;   }
+"-"  { yylval.charValue = yytext[0]; return MINUS;  }
+"*"  { yylval.charValue = yytext[0]; return MULT;   }
+"/"  { yylval.charValue = yytext[0]; return DIV;    }
+"\%" { yylval.charValue = yytext[0]; return MOD;    } 
+"="  { yylval.charValue = yytext[0]; return ASSIGN; }
+"==" { yylval.charValue = yytext[0]; return EQ;     }
+"!=" { yylval.charValue = yytext[0]; return DIF;    }
+"<"  { yylval.charValue = yytext[0]; return LT;     }
+"<=" { yylval.charValue = yytext[0]; return LTE;    } 
+">"  { yylval.charValue = yytext[0]; return GT;     }
+">=" { yylval.charValue = yytext[0]; return GTE;    }
 
 "("  { return PAR_OPEN; }
 ")"  { return PAR_CLOSE; }
@@ -54,22 +54,22 @@ int yyline = 1;
 
 \-?[0-9]+ { 
    yylval.intValue = atoi(yytext);  
-   return INT; 
+   return TK_INT; 
 }  // Integers
 
 \-?[0-9].[0-9]+ {
     yylval.floatValue = atof(yytext);
-    return FLOAT;
+    return TK_FLOAT;
 } // Floats
 
 "true" { 
     yylval.boolValue = 1;
-    return TRUE; 
+    return TK_BOOLEAN; 
 }
 
 "false" { 
     yylval.boolValue = 0;
-    return FALSE;        
+    return TK_BOOLEAN;        
 }
 
 [a-zA-Z]+ { 

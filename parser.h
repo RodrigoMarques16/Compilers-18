@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 49 "parser.bison" /* yacc.c:1909  */
+#line 50 "parser.bison" /* yacc.c:1909  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,9 +61,9 @@ Node* root;
   enum yytokentype
   {
     ID = 258,
-    INT = 259,
-    FLOAT = 260,
-    BOOLEAN = 261,
+    TK_INT = 259,
+    TK_FLOAT = 260,
+    TK_BOOLEAN = 261,
     TYPE_INT = 262,
     TYPE_FLOAT = 263,
     TYPE_BOOLEAN = 264,
@@ -84,21 +84,19 @@ Node* root;
     ELSE = 279,
     WHILE = 280,
     RETURN = 281,
-    TRUE = 282,
-    FALSE = 283,
-    PAR_OPEN = 284,
-    PAR_CLOSE = 285,
-    RECT_OPEN = 286,
-    RECT_CLOSE = 287,
-    BRACKET_OPEN = 288,
-    BRACKET_CLOSE = 289,
-    SEMI = 290,
-    COMMA = 291,
-    COMMENT_BEGIN = 292,
-    COMMENT_END = 293,
-    MAIN = 294,
-    READ = 295,
-    WRITE = 296
+    PAR_OPEN = 282,
+    PAR_CLOSE = 283,
+    RECT_OPEN = 284,
+    RECT_CLOSE = 285,
+    BRACKET_OPEN = 286,
+    BRACKET_CLOSE = 287,
+    SEMI = 288,
+    COMMA = 289,
+    COMMENT_BEGIN = 290,
+    COMMENT_END = 291,
+    MAIN = 292,
+    READ = 293,
+    WRITE = 294
   };
 #endif
 
@@ -117,8 +115,9 @@ union YYSTYPE
     Node* nodeValue;
     Type* typeValue;
     ParamList* paramValue;
+    Expr* exprValue;
 
-#line 122 "parser.h" /* yacc.c:1909  */
+#line 121 "parser.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
