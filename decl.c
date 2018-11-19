@@ -18,7 +18,7 @@ Node* make_decl_function(Type* subtype, char* name, ParamList* params, Node* bod
 }
 
 Node* make_decl_var(Type* type, char* name) {
-    return make_decl(DECL_VAR, type, name, NULL);;
+    return make_decl(DECL_VAR, type, name, NULL);
 }
 
 Node* append_decl(Node* node, Node* list) {

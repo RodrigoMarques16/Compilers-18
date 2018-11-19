@@ -1,45 +1,114 @@
 #include "stack.h"
 
+/*
+ * Iterate through a programs declarations and generate
+ * for each of them generate their p-code.
+ * 
+ * root - First declaration of a program
+ */
 InstrList* compile_pcode(Node* root) {
+    dbgprintf("Compiling declaration\n");
     InstrList* pcode = NULL;
     Node* node = root;
-    dbgprintf("Compiling declaration\n");
-    // Iterate the declaration list
     while(node != NULL) {
         switch(node->kind.decl) {
             case DECL_VAR: {
-                dbgprintf("Compiling var decl\n");
+                InstrList* list = compile_var(node);
                 break;
             }
             case DECL_FUNCTION: {
-                dbgprintf("Compiling function decl\n");
-                compile_function(node->body);
+                InstrList* list = compile_function(node);
+                pcode = append(pcode, list);
                 break;
             }
-        }
-        node = node->next;
-    }
-}
-
-InstrList* compile_stmt(Node* body) {
-    // For now this function only looks for exprs
-    InstrList* pcode = NULL;
-    Node* node = body;
-    while(node != NULL) {
-        switch(node->kind.stmt) {
-            case STMT_BLOCK {
-                compile_block(node->next);
-            }
-        }
-        if (node->attr != NULL) {
-            dbgprintf("Compiling expr\n");
-            append(pcode, compile_expr(node->attr));
         }
         node = node->next;
     }
     return pcode;
 }
 
+/*
+ * Translate a function and its descendents to p-code
+ * 
+ * func - Node of a function declaration
+ */
+InstrList* compile_function(Node* func) {
+    dbgprintf("Compiling function decl\n");
+    InstrList* code = NULL;
+    // TODO: code for function declaration
+    Node* node = func->body;
+    while(node != NULL) {
+        InstrList* list = compile_stmt(node);
+        code = append(code, list);
+        node = node->next;
+    }
+    return code;
+}
+
+/*
+ * Translate a variable declaration to p-code
+ * 
+ * var - Node of a variable declaration
+ */
+InstrList* compile_var(Node* var) {
+    dbgprintf("Compiling var decl\n");
+    InstrList* code = NULL;
+    // TODO: code for var declaration
+    return code;
+}
+
+/*
+ * Translate a list of statements to p-code
+ * 
+ * stmt - Node of a statement
+ */
+InstrList* compile_stmt(Node* stmt) {
+    InstrList* code = NULL;
+    Node* node = stmt;
+    while(node != NULL) {
+        switch(node->kind.stmt) {
+            case STMT_EXPR: {
+                break;
+            }
+            case STMT_ASSIGN: {
+                break;
+            }
+            case STMT_IFELSE: {
+                break;
+            }
+            case STMT_WHILE: {
+                break;
+            }
+            case STMT_RETURN: {
+                break;
+            }
+            case STMT_DECL: {
+                break;
+            }
+            case STMT_BLOCK: {
+                InstrList* list = compile_stmt(node->body);
+                code = append(code, list);
+                break;
+            }
+            case STMT_READ: {
+                break;
+            }                   
+            case STMT_WRITE: {
+                break;
+            }                                        
+        }
+        if (node->attr != NULL) {
+            dbgprintf("Compiling expr\n");
+            code = append(code, compile_expr(node->attr));
+        }
+        node = node->next;
+    }
+    return code;
+}
+
+/*
+ * Translates an expression to P-code 
+ */
 InstrList* compile_expr(Expr* expr) {
     if (expr == NULL) {
         printf("ERROR: CONVERTING NULL EXPR TO INSTR\n");
@@ -47,18 +116,20 @@ InstrList* compile_expr(Expr* expr) {
     }
     switch(expr->kind) {
         case EXPR_ID: {
-            // nothing yet
+            dbgprintf("Compiling variable expression.\n");
+            // TODO: symbol look up
+            //Instr* instr = make_instr(kLOD, );
             break;
         }
         case EXPR_CONSTANT: {
-            // hardcoded for ints
-            Instr* instr = make_instr(LDC, expr->val.int_value);
+            dbgprintf("Compiling constant expression.\n");
+            Instr* instr = make_instr(kLDC, expr->val.int_value);
             return make_instrlist(instr, NULL);
         }
         case EXPR_ARITHMETIC: {
             InstrList* left = compile_expr(expr->left);
             InstrList* right = compile_expr(expr->right);
-            Instr* instr = make_instr(ADI, -1);
+            Instr* instr = make_instr_simple(ADI);
             InstrList* list = make_instrlist(instr, NULL);
             left = append(right, left);
             left = append(list, left);
@@ -79,6 +150,12 @@ Instr* make_instr(instr_t kind, int arg) {
     Instr* instr = (Instr*) malloc(sizeof(Instr));
     instr->kind = kind;
     instr->arg  = arg;
+    return instr;
+}
+
+Instr* make_instr_simple(instr_t kind) {
+    Instr* instr = (Instr*) malloc(sizeof(Instr));
+    instr->kind = kind;
     return instr;
 }
 
@@ -132,22 +209,42 @@ InstrList* append(InstrList* list, InstrList* next) {
 
 void printInstr(Instr* instr) {
     switch(instr->kind) {
-        case LDC: {
+        case kLDC: {
             printf("LDC %d\n", instr->arg);
             break;
         }
-        case ADI: {
-            printf("ADI %d\n", instr->arg);
+        case kADI: {
+            printf("ADI\n");
             break;
         }
-        case MPI: {
-            printf("MPI %d\n", instr->arg);
+        case kMPI: {
+            printf("MPI\n");
             break;
         }
-        case SBI: {
-            printf("SBI %d\n", instr->arg);
+        case kSBI: {
+            printf("SBI\n");
             break;
-        }                                                                                                                                            
+        }     
+        case kLOD: {
+            printf("LOD %d\n", instr->arg);
+            break;
+        } 
+        case kWRI: {
+            printf("WRI");
+            break;
+        }                         
+        case kSTO: {
+            printf("STOP\n");
+            break;
+        }                 
+        case kFJP: {
+            printf("FJP %d\n", instr->arg);
+            break;
+        }                 
+        case kUJP: {
+            printf("UJP %d\n", instr->arg);
+            break;
+        }                                                                               
     }
 }
 

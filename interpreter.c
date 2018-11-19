@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
         printf("parse sucessful\n");
         printTree(root);
         InstrList* instrs = compile_pcode(root);
-        //printListIntrs(instrs);
+        printListIntrs(instrs);
         //printf("\nResult = %d\n", eval(root));
     }
     return 0;

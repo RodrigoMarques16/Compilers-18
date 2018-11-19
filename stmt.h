@@ -18,19 +18,6 @@ typedef enum {
 #include "decl.h"
 #include "expr.h"
 
-/*
-Node* make_stmt(stmt_t kind, Type* type, char* name, Node* expr,
-                Node* body, Node* else_body, Node* next);
-Node* make_stmt_block(Node* body);
-Node* make_stmt_assign(char* name, Node* expr);
-Node* make_stmt_decl(Node* decl);
-Node* make_stmt_while(Node* expr, Node* body);
-Node* make_stmt_return(Node* expr);
-Node* make_stmt_ifelse(Node* expr, Node* body, Node* else_body);
-Node* make_stmt_io(stmt_t kind, Node* expr);
-Node* make_stmt_expr(Node* expr);
-Node* append_stmt(Node* node, Node* next);
-*/
 Node* make_stmt(stmt_t kind, Type* type, Expr* expr,
                 Node* body, Node* else_body, Node* next);
 Node* make_stmt_block(Node* body);
