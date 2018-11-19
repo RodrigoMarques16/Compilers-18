@@ -17,34 +17,6 @@ int eval(Node* expr) {
       break;
     }
   }
-  /*
-  else if (expr->kind == E_INTEGER) {
-    result = expr->attr.value; 
-  } 
-  else if (expr->kind == E_OPERATION) {
-    int vLeft = eval(expr->attr.op.left);
-    int vRight = eval(expr->attr.op.right);
-    switch (expr->attr.op.operator) {
-      case PLUS: 
-        result = vLeft + vRight; 
-        break;
-      case MINUS: 
-        result = vLeft - vRight;
-        break;
-      case MULT: 
-        result = vLeft * vRight;
-        break;
-      case DIV:
-        result = vLeft / vRight;
-        break;
-      case MOD:
-        result = vLeft % vRight;
-        break;
-      default: yyerror("Unknown operator!");
-    }
-  }
-  return result;
-  */
 }
 int main(int argc, char** argv) {
     --argc; ++argv;
@@ -58,6 +30,8 @@ int main(int argc, char** argv) {
     if (yyparse() == 0) {
         printf("parse sucessful\n");
         printTree(root);
+        InstrList* instrs = compile_pcode(root);
+        //printListIntrs(instrs);
         //printf("\nResult = %d\n", eval(root));
     }
     return 0;

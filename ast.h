@@ -11,10 +11,11 @@ typedef struct _Node Node;
 #include "expr.h"
 #include "decl.h"
 #include "stmt.h"
+#include "stack.h"
 #include "parser.h"
 
 #define INDENT_CHAR '-'
-#define DEBUG_ENABLED 0
+#define DEBUG_ENABLED 1
 #define dbgprintf(...) if (DEBUG_ENABLED) {printf(__VA_ARGS__);}
 
 typedef enum { 
@@ -24,8 +25,8 @@ typedef enum {
 } node_t;
 
 typedef union {
-    stmt_t stmt;
     expr_t expr;
+    stmt_t stmt;
     decl_t decl;
 } node_k;
 
@@ -45,14 +46,3 @@ void printTree(Node* node);
 void printOperator(int opcode);
 
 #endif
-
-//Expr attr;
-    /*union {
-        Constant val;
-        char* name; // for variables
-        struct { 
-            int op;
-            struct _Node* left;
-            struct _Node* right;
-        } op; // for binary expressions
-    } attr;*/

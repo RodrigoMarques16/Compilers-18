@@ -6,8 +6,9 @@ void doIndent(int indent) {
     }
 }
 
-void printTree(Node* node) {
+void printTree(Node* root) {
     printf("Abstract Syntax Tree:\n");
+    Node* node = root;
     while(node != NULL) {
         print_decl(node, 0);
         printf("\n");

@@ -26,13 +26,6 @@ typedef struct _Expr {
     Constant val;        // Value
 } Expr;
 
-/*
-Node* make_expr(expr_t kind, char*name);
-Node* make_literal(type_t type, Constant val);
-Node* make_int_literal(int value);
-Node* make_float_literal(float value);
-Node* make_bool_literal(boolean value);
-*/ 
 Expr* make_expr(expr_t kind, Type* type, char* name, Constant val, 
                 int op, Expr* left, Expr* right);
                 
