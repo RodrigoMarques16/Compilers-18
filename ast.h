@@ -36,6 +36,7 @@ typedef struct _Node {
     node_t nodekind;         // merge nodekind with kind?
     node_k kind;             
     Expr*  attr;             // Value, id and expressions
+    Symbol symbol;           // For declarations
     struct _Node* body;      // For compound, loop, if-else
     struct _Node* else_body; // For if-else
     struct _Node* next;      // Next in sequence

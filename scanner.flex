@@ -57,7 +57,7 @@ int yyline = 1;
    return TK_INT; 
 }  // Integers
 
-\-?[0-9].[0-9]+ {
+\-?[0-9]\.[0-9]+ {
     yylval.floatValue = atof(yytext);
     return TK_FLOAT;
 } // Floats

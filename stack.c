@@ -1,4 +1,11 @@
 #include "stack.h"
+#include "parser.h"
+
+Scope* global_scope;
+
+void initSymbolTable() {
+    global_scope = enterScope(NULL);
+}
 
 /*
  * Iterate through a programs declarations and generate
@@ -8,12 +15,17 @@
  */
 InstrList* compile_pcode(Node* root) {
     dbgprintf("Compiling declaration\n");
+    
     InstrList* pcode = NULL;
     Node* node = root;
+    initSymbolTable();
+
     while(node != NULL) {
+        
         switch(node->kind.decl) {
             case DECL_VAR: {
                 InstrList* list = compile_var(node);
+                pcode = append(pcode, list);
                 break;
             }
             case DECL_FUNCTION: {
@@ -53,7 +65,12 @@ InstrList* compile_function(Node* func) {
 InstrList* compile_var(Node* var) {
     dbgprintf("Compiling var decl\n");
     InstrList* code = NULL;
-    // TODO: code for var declaration
+    Symbol* symbol = make_symbol(
+            kGLOBAL, 
+            var->attr->type, 
+            var->attr->name
+    );
+    bind(global_scope, symbol);
     return code;
 }
 
@@ -66,10 +83,13 @@ InstrList* compile_stmt(Node* stmt) {
     InstrList* code = NULL;
     Node* node = stmt;
     while(node != NULL) {
+        if (node->nodekind == K_EXPR) {
+            dbgprintf("Compiling expr stmt\n");
+            code = append(code, compile_expr(node->attr));
+            node = node->next;
+            continue;
+        }
         switch(node->kind.stmt) {
-            case STMT_EXPR: {
-                break;
-            }
             case STMT_ASSIGN: {
                 break;
             }
@@ -97,10 +117,6 @@ InstrList* compile_stmt(Node* stmt) {
                 break;
             }                                        
         }
-        if (node->attr != NULL) {
-            dbgprintf("Compiling expr\n");
-            code = append(code, compile_expr(node->attr));
-        }
         node = node->next;
     }
     return code;
@@ -116,28 +132,40 @@ InstrList* compile_expr(Expr* expr) {
     }
     switch(expr->kind) {
         case EXPR_ID: {
-            dbgprintf("Compiling variable expression.\n");
+            dbgprintf("Compiling variable symbol.\n");
             // TODO: symbol look up
             //Instr* instr = make_instr(kLOD, );
             break;
         }
         case EXPR_CONSTANT: {
-            dbgprintf("Compiling constant expression.\n");
+            dbgprintf("Compiling constant value.\n");
             Instr* instr = make_instr(kLDC, expr->val.int_value);
             return make_instrlist(instr, NULL);
         }
         case EXPR_ARITHMETIC: {
+            dbgprintf("Compiling arithmetic expression.\n");
             InstrList* left = compile_expr(expr->left);
+            // save result to var   
             InstrList* right = compile_expr(expr->right);
-            Instr* instr = make_instr_simple(ADI);
+            // save result to var
+            left = append(left, right);
+            instr_t kind = opToInstr(expr->op);
+            Instr* instr = make_instr_simple(kind);
             InstrList* list = make_instrlist(instr, NULL);
-            left = append(right, left);
-            left = append(list, left);
+            left = append(left, list);
             return left;
         }
         case EXPR_RELATIONAL: {
-            // nothing yet
-            break;
+            InstrList* left = compile_expr(expr->left);
+            // save result to var
+            InstrList* right = compile_expr(expr->right);
+            // save result to var
+            instr_t kind = opToInstr(expr->op);
+            Instr* instr = make_instr_simple(kind);
+            InstrList* list = make_instrlist(instr, NULL);
+            left = append(left, right);
+            left = append(left, list);
+            return left;
         }
         case EXPR_ASSIGN: {
             // nothing yet
@@ -194,7 +222,7 @@ InstrList* tail(InstrList* list) {
 
 InstrList* append(InstrList* list, InstrList* next) {
     InstrList* tmp = list;
-    if (list == NULL){
+    if (list == NULL) {
         return next;
     }
     if(next == NULL) {
@@ -213,6 +241,18 @@ void printInstr(Instr* instr) {
             printf("LDC %d\n", instr->arg);
             break;
         }
+        case kLOD: {
+            printf("LOD %d\n", instr->arg);
+            break;
+        } 
+        case kRDI: {
+            printf("RDI %s\n", instr->arg);
+            break;
+        }
+        case kWRI: {
+            printf("WRI %s\n", instr->arg);
+            break;
+        }                         
         case kADI: {
             printf("ADI\n");
             break;
@@ -224,15 +264,15 @@ void printInstr(Instr* instr) {
         case kSBI: {
             printf("SBI\n");
             break;
+        }   
+        case kDVI: {
+            printf("DVI\n");
+            break;
+        }
+        case kMOD: {
+            printf("MOD\n");
+            break;
         }     
-        case kLOD: {
-            printf("LOD %d\n", instr->arg);
-            break;
-        } 
-        case kWRI: {
-            printf("WRI");
-            break;
-        }                         
         case kSTO: {
             printf("STOP\n");
             break;
@@ -244,7 +284,38 @@ void printInstr(Instr* instr) {
         case kUJP: {
             printf("UJP %d\n", instr->arg);
             break;
-        }                                                                               
+        }    
+        case kEQU: {
+            printf("EQU\n");
+            break;
+        }
+        case kNEQ: {
+            printf("NEQ\n");
+            break;
+        }
+        case kLST: {
+            printf("LST\n");
+            break;
+        }
+        case kLEQ: {
+            printf("LEQ\n");
+        }
+        case kGRT: {
+            printf("GRT\n");
+            break;
+        }
+        case kGEQ: {
+            printf("GEQ\n");
+            break;
+        }
+        case kMOV: {
+            printf("MOV %d", instr->arg);
+            break;
+        }
+        default: {
+            printf("EXPR NOT FOUND\n");
+            break;
+        }                                                                       
     }
 }
 
@@ -253,5 +324,22 @@ void printListIntrs(InstrList* list) {
     while(list != NULL){
         printInstr(list->instr);
         list = list->next;                                                        
+    }
+}
+
+
+expr_t opToInstr(int op) {
+    switch(op) {
+        case PLUS:  return kADI;
+        case MINUS: return kSBI;
+        case MULT:  return kMPI;
+        case DIV:   return kDVI;
+        case MOD:   return kMOD;
+        case EQ:    return kEQU;
+        case DIF:   return kNEQ;
+        case LT:    return kLST;
+        case LTE:   return kLEQ;
+        case GT:    return kGRT;
+        case GTE:   return kGEQ;
     }
 }

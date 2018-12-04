@@ -2,29 +2,31 @@
 #define __stack_h__
 
 #include "ast.h"
+#include "symbol.h"
+#include "scope.h"
 
 typedef enum {
     kLDC,   // Load const
     kRDI,   // Read immediate
+    kLOD,   // Load contents of address
     kADI,   // Add immediate
     kMPI,   // Mult immediate
     kSBI,   // Sub immediate
-    kLOD,   // Load contents of address
+    kDVI,   // Integer division
+    kMOD,   // Modulo
     kWRI,   // Write immediate
     kSTO,   // Stop
     kFJP,   // False Jump
     kUJP,   // Unconditional Jump
-    kGRT,   // Greater than
-    kLST,   // Lesser than
-    kLEQ,   // Lesser or equal
-    kGEQ,   // Greater or equal
     kEQU,   // Equal
     kNEQ,   // Not Equal
+    kLST,   // Lesser than
+    kLEQ,   // Lesser or equal
+    kGRT,   // Greater than
+    kGEQ,   // Greater or equal
     kLABEL, // Label
     kMOV,   // Move
-    kMOD,   // Modulo
     kENT,   // Enter block
-    kNOT    // Boolean not
 } instr_t;  
 
 typedef struct _Instr {
@@ -38,6 +40,7 @@ typedef struct _InstrList {
 } InstrList;
 
 Instr* make_instr(instr_t kind, int arg);
+Instr* make_instr_simple(instr_t kind);
 Instr* head(InstrList* list);
 InstrList* make_instrlist(Instr* instr, InstrList* next);
 InstrList* tail(InstrList* list);
@@ -52,5 +55,7 @@ InstrList* compile_expr(Expr* expr);
 
 void printInstr(Instr* instr);
 void printListIntrs(InstrList* list);
+expr_t opToInstr(int op);
+void initSymbolTable();
 
 #endif

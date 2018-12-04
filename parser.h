@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.1.  */
+/* A Bison parser, made by GNU Bison 3.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
@@ -30,6 +30,9 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
+
 #ifndef YY_YY_PARSER_H_INCLUDED
 # define YY_YY_PARSER_H_INCLUDED
 /* Debug traces.  */
@@ -40,7 +43,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 53 "parser.bison" /* yacc.c:1913  */
+#line 53 "parser.bison" /* yacc.c:1906  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,7 +56,7 @@ extern FILE* yyin;
 extern void yyerror(const char* msg);
 Node* root;
 
-#line 57 "parser.h" /* yacc.c:1913  */
+#line 60 "parser.h" /* yacc.c:1906  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -105,7 +108,7 @@ Node* root;
 
 union YYSTYPE
 {
-#line 26 "parser.bison" /* yacc.c:1913  */
+#line 26 "parser.bison" /* yacc.c:1906  */
 
     int intValue;
     int boolValue;
@@ -117,7 +120,7 @@ union YYSTYPE
     ParamList* paramValue;
     Expr* exprValue;
 
-#line 121 "parser.h" /* yacc.c:1913  */
+#line 124 "parser.h" /* yacc.c:1906  */
 };
 
 typedef union YYSTYPE YYSTYPE;

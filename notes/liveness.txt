@@ -1,0 +1,3 @@
+in[n] = use[n] union with (out[n] - def[n])
+
+out[n] = union of in[k] where k are the sucessors of n
