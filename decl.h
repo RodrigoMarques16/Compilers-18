@@ -8,6 +8,7 @@ typedef enum {
 
 #include "ast.h"
 #include "type.h"
+#include "symbol.h"
 
 Node* make_decl(decl_t kind, Type* type, char* name, Node* body);
 Node* make_decl_function(Type* subtype, char* name, ParamList* params, Node* body);

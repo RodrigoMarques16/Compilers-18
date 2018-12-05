@@ -4,6 +4,12 @@
 #include "hash_table.h"
 #include "symbol.h"
 
+typedef enum {
+    GLOBAL,
+    LOCAL, 
+    PARAM
+} scope_t;
+
 typedef struct scope {
     char* name;
     struct hash_table* symbols;

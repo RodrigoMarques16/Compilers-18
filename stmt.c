@@ -28,7 +28,10 @@ Node* make_stmt_block(Node* body) {
 
 Node* make_stmt_assign(Expr* expr) {
     /* make assignments binary expressions */
-    return make_stmt(STMT_ASSIGN, NULL, expr, NULL, NULL, NULL);
+    Symbol* symbol = make_symbol(expr->left->name, expr->type);
+    Node* stmt = make_stmt(STMT_ASSIGN, NULL, expr, NULL, NULL, NULL);
+    stmt->symbol = symbol;
+    return stmt;
 }
 
 Node* make_stmt_decl(Node* decl) {

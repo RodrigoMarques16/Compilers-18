@@ -1,5 +1,6 @@
 #include "stack.h"
 #include "parser.h"
+#include "symbol.h"
 
 Scope* global_scope;
 
@@ -14,17 +15,14 @@ void initSymbolTable() {
  * root - First declaration of a program
  */
 InstrList* compile_pcode(Node* root) {
-    dbgprintf("Compiling declaration\n");
-    
     InstrList* pcode = NULL;
     Node* node = root;
     initSymbolTable();
 
     while(node != NULL) {
-        
         switch(node->kind.decl) {
             case DECL_VAR: {
-                InstrList* list = compile_var(node);
+                InstrList* list = compile_var(node, GLOBAL);
                 pcode = append(pcode, list);
                 break;
             }
@@ -62,15 +60,23 @@ InstrList* compile_function(Node* func) {
  * 
  * var - Node of a variable declaration
  */
-InstrList* compile_var(Node* var) {
+InstrList* compile_var(Node* var, scope_t scope) {
     dbgprintf("Compiling var decl\n");
     InstrList* code = NULL;
-    Symbol* symbol = make_symbol(
+    /*Symbol* symbol = make_symbol(
             kGLOBAL, 
             var->attr->type, 
             var->attr->name
     );
-    bind(global_scope, symbol);
+    */
+    // Bind variable to its scope
+    bind(global_scope, var->symbol);
+
+    /* Vars don't have initilization
+    if (var->attr != NULL) {
+        code = compile_expr(var->attr);
+    }*/
+
     return code;
 }
 
@@ -91,6 +97,12 @@ InstrList* compile_stmt(Node* stmt) {
         }
         switch(node->kind.stmt) {
             case STMT_ASSIGN: {
+                dbgprintf("Compiling assignment\n");
+                check_type(node->attr);
+                InstrList* list = compile_expr(node->attr->right);
+                Instr* instr = make_instr(kSTO, 1); // placeholder
+                list = append(list, make_instrlist(instr, NULL));
+                code = append(code, list);
                 break;
             }
             case STMT_IFELSE: {
@@ -235,6 +247,11 @@ InstrList* append(InstrList* list, InstrList* next) {
     return list;
 }
 
+int check_type(Expr* expr) {
+    // Lookup expr->left
+    return type == expr->right->type->kind;
+}
+
 void printInstr(Instr* instr) {
     switch(instr->kind) {
         case kLDC: {
@@ -274,7 +291,7 @@ void printInstr(Instr* instr) {
             break;
         }     
         case kSTO: {
-            printf("STOP\n");
+            printf("STO %d\n", instr->arg);
             break;
         }                 
         case kFJP: {

@@ -9,6 +9,7 @@ Node* make_decl(decl_t kind, Type* type, char* name, Node* body) {
     node->attr->name = name;
     node->body       = body;
     node->next       = NULL;
+    node->symbol     = make_symbol(name, type);
     return node;
 }
 

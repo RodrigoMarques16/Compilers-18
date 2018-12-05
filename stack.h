@@ -49,7 +49,7 @@ InstrList* append(InstrList* list, InstrList* next);
 
 InstrList* compile_pcode(Node* root);
 InstrList* compile_function(Node* func);
-InstrList* compile_var(Node* func);
+InstrList* compile_var(Node* func, scope_t scope);
 InstrList* compile_stmt(Node* body);
 InstrList* compile_expr(Expr* expr);
 
@@ -57,5 +57,6 @@ void printInstr(Instr* instr);
 void printListIntrs(InstrList* list);
 expr_t opToInstr(int op);
 void initSymbolTable();
+int check_type(Expr* expr);
 
 #endif
