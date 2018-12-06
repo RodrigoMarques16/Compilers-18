@@ -32,6 +32,7 @@ typedef enum {
 typedef struct _Instr {
     instr_t kind;
     int arg;
+    char* name;
 } Instr;
 
 typedef struct _InstrList {
@@ -40,16 +41,17 @@ typedef struct _InstrList {
 } InstrList;
 
 Instr* make_instr(instr_t kind, int arg);
+Instr* make_instr_string(instr_t kind, char* arg);
 Instr* make_instr_simple(instr_t kind);
 Instr* head(InstrList* list);
 InstrList* make_instrlist(Instr* instr, InstrList* next);
 InstrList* tail(InstrList* list);
 InstrList* append(InstrList* list, InstrList* next);
-//InstrList* append(Instr* instr, InstrList* list);
+InstrList* append_instr(InstrList* list, Instr* next);
 
 InstrList* compile_pcode(Node* root);
 InstrList* compile_function(Node* func);
-InstrList* compile_var(Node* func, scope_t scope);
+InstrList* compile_var(Node* func, Scope* scope);
 InstrList* compile_stmt(Node* body);
 InstrList* compile_expr(Expr* expr);
 
@@ -58,5 +60,6 @@ void printListIntrs(InstrList* list);
 expr_t opToInstr(int op);
 void initSymbolTable();
 int check_type(Expr* expr);
+char* generate_label();
 
 #endif

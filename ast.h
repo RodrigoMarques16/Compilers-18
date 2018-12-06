@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define INDENT_CHAR '-'
+#define DEBUG_ENABLED 1
+#define dbgprintf(...) if (DEBUG_ENABLED) {printf(__VA_ARGS__);}
+
 typedef struct _Node Node;
 
 #include "type.h"
@@ -14,10 +18,8 @@ typedef struct _Node Node;
 #include "stack.h"
 #include "parser.h"
 #include "symbol.h"
+#include "scope.h"
 
-#define INDENT_CHAR '-'
-#define DEBUG_ENABLED 1
-#define dbgprintf(...) if (DEBUG_ENABLED) {printf(__VA_ARGS__);}
 
 typedef enum { 
     K_EXPR, 

@@ -1,8 +1,9 @@
 
-OBJS=scanner.o parser.o ast.o interpreter.o type.o decl.o stmt.o expr.o symbol.o stack.o scope.o
+OBJS=scanner.o parser.o ast.o interpreter.o type.o decl.o stmt.o expr.o symbol.o stack.o scope.o hash_table.o
 INTERM=scanner.c parser.c parser.h
 PROGRAM=./interpreter
-CFLAGS=-g 
+CC = gcc
+CFLAGS= -g -O3 
 
 all: $(PROGRAM)
 
@@ -13,7 +14,7 @@ parser.c parser.h: parser.bison
 	bison --defines=parser.h -o parser.c parser.bison
 
 $(PROGRAM): $(OBJS)
-	$(CC) -o $(PROGRAM) $(OBJS)
+	$(CC) $(CFLAGS) -o $(PROGRAM) $(OBJS)
 
 clean:
 	rm -f $(PROGRAM) $(OBJS) $(INTERM)

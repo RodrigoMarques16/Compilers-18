@@ -14,11 +14,12 @@ typedef struct scope {
     char* name;
     struct hash_table* symbols;
     struct scope* parent;
+    int level;
 } Scope;
 
 Scope* enterScope(Scope* parent); // create new scope
 Scope* leaveScope(Scope* scope); // pop list
 Symbol* lookup(Scope* scope, char* name);
-Symbol* bind(Scope* scope, Symbol* symbol);
+void bind(Scope* scope, Symbol* symbol);
 
 #endif

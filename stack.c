@@ -3,9 +3,12 @@
 #include "symbol.h"
 
 Scope* global_scope;
+Scope* current_scope;
+int label_count = 0;
 
 void initSymbolTable() {
     global_scope = enterScope(NULL);
+    current_scope = global_scope;
 }
 
 /*
@@ -17,12 +20,13 @@ void initSymbolTable() {
 InstrList* compile_pcode(Node* root) {
     InstrList* pcode = NULL;
     Node* node = root;
+
     initSymbolTable();
 
     while(node != NULL) {
         switch(node->kind.decl) {
             case DECL_VAR: {
-                InstrList* list = compile_var(node, GLOBAL);
+                InstrList* list = compile_var(node, global_scope);
                 pcode = append(pcode, list);
                 break;
             }
@@ -34,6 +38,7 @@ InstrList* compile_pcode(Node* root) {
         }
         node = node->next;
     }
+
     return pcode;
 }
 
@@ -44,8 +49,14 @@ InstrList* compile_pcode(Node* root) {
  */
 InstrList* compile_function(Node* func) {
     dbgprintf("Compiling function decl\n");
-    InstrList* code = NULL;
-    // TODO: code for function declaration
+    InstrList* code = NULL;    
+
+    Symbol* symbol = make_symbol(func->attr->name, func->attr->type);
+    bind(global_scope, symbol);
+
+    Instr* label = make_instr_string(kLABEL, symbol->name);
+    code = append(code, make_instrlist(label, NULL));
+
     Node* node = func->body;
     while(node != NULL) {
         InstrList* list = compile_stmt(node);
@@ -60,22 +71,18 @@ InstrList* compile_function(Node* func) {
  * 
  * var - Node of a variable declaration
  */
-InstrList* compile_var(Node* var, scope_t scope) {
+InstrList* compile_var(Node* var, Scope* scope) {
     dbgprintf("Compiling var decl\n");
     InstrList* code = NULL;
-    /*Symbol* symbol = make_symbol(
-            kGLOBAL, 
-            var->attr->type, 
-            var->attr->name
-    );
-    */
+    
     // Bind variable to its scope
-    bind(global_scope, var->symbol);
+    bind(scope, var->symbol);
 
-    /* Vars don't have initilization
-    if (var->attr != NULL) {
-        code = compile_expr(var->attr);
-    }*/
+    // Vars don't have initilization yet
+    //
+    //if (var->attr != NULL) {
+    //    code = compile_expr(var->attr);
+    //}*/
 
     return code;
 }
@@ -98,14 +105,44 @@ InstrList* compile_stmt(Node* stmt) {
         switch(node->kind.stmt) {
             case STMT_ASSIGN: {
                 dbgprintf("Compiling assignment\n");
-                check_type(node->attr);
+                
+                if(check_type(node->attr) == 0)
+                    exit(-1);
+                
                 InstrList* list = compile_expr(node->attr->right);
-                Instr* instr = make_instr(kSTO, 1); // placeholder
-                list = append(list, make_instrlist(instr, NULL));
                 code = append(code, list);
+
+                Instr* instr = make_instr_string(kSTO, node->attr->left->name);
+                code = append_instr(code, instr);
+
                 break;
             }
             case STMT_IFELSE: {
+                InstrList* list = compile_expr(node->attr);
+                code = append(code, list);
+
+                char* label_false = generate_label();
+                char* label_after = generate_label();
+
+                Instr* instr = make_instr_string(kFJP, label_false);
+                code = append_instr(code, instr);
+
+                // If true
+                list = compile_stmt(node->body);
+                code = append(code, list);
+                instr = make_instr_string(kUJP, label_after);
+                code = append_instr(code, instr);
+
+                // If false;
+                instr = make_instr_string(kLABEL, label_false);
+                code = append_instr(code, instr);
+                list = compile_stmt(node->else_body);
+                code = append(code, list);
+                
+                instr = make_instr_string(kLABEL, label_after);
+                code = append_instr(code, instr);
+
+                label_count++;
                 break;
             }
             case STMT_WHILE: {
@@ -115,11 +152,16 @@ InstrList* compile_stmt(Node* stmt) {
                 break;
             }
             case STMT_DECL: {
+                dbgprintf("Compiling local declaration\n");
+                Symbol* symbol = make_symbol(node->attr->name, node->attr->type);
+                bind(current_scope, symbol);
                 break;
             }
             case STMT_BLOCK: {
+                current_scope = enterScope(current_scope);
                 InstrList* list = compile_stmt(node->body);
                 code = append(code, list);
+                current_scope = leaveScope(current_scope);
                 break;
             }
             case STMT_READ: {
@@ -145,8 +187,13 @@ InstrList* compile_expr(Expr* expr) {
     switch(expr->kind) {
         case EXPR_ID: {
             dbgprintf("Compiling variable symbol.\n");
-            // TODO: symbol look up
-            //Instr* instr = make_instr(kLOD, );
+            Symbol* symbol = lookup(current_scope, expr->name);
+            if (symbol == NULL) {
+                printf("'%s' is undefined\n", expr->name);
+            }else { 
+                Instr* instr = make_instr_string(kLOD, expr->name);
+                return make_instrlist(instr, NULL); 
+            }
             break;
         }
         case EXPR_CONSTANT: {
@@ -180,7 +227,7 @@ InstrList* compile_expr(Expr* expr) {
             return left;
         }
         case EXPR_ASSIGN: {
-            // nothing yet
+            printf("!!!!!!!!!!!!!!!\n");
             break;
         }
     }
@@ -190,6 +237,13 @@ Instr* make_instr(instr_t kind, int arg) {
     Instr* instr = (Instr*) malloc(sizeof(Instr));
     instr->kind = kind;
     instr->arg  = arg;
+    return instr;
+}
+
+Instr* make_instr_string(instr_t kind, char* arg) {
+    Instr* instr = (Instr*) malloc(sizeof(Instr));
+    instr->kind  = kind;
+    instr->name  = arg;
     return instr;
 }
 
@@ -247,27 +301,45 @@ InstrList* append(InstrList* list, InstrList* next) {
     return list;
 }
 
+InstrList* append_instr(InstrList* list, Instr* next) {
+    return append(list, make_instrlist(next, NULL));
+}
+
 int check_type(Expr* expr) {
-    // Lookup expr->left
-    return type == expr->right->type->kind;
+    Symbol* symbol = lookup(current_scope, expr->left->name);
+
+    if (symbol == NULL)
+        return 0;
+
+    /*
+    if( symbol->type->kind == expr->right->type->kind) {
+        return 1;
+    }
+
+    printf("!!Mismatching types!!\n");*/
+    return 1;
 }
 
 void printInstr(Instr* instr) {
     switch(instr->kind) {
+        case kLABEL: {
+            printf("%s:\n", instr->name);
+            break;
+        }
         case kLDC: {
             printf("LDC %d\n", instr->arg);
             break;
         }
         case kLOD: {
-            printf("LOD %d\n", instr->arg);
+            printf("LOD '%s'\n", instr->name);
             break;
         } 
         case kRDI: {
-            printf("RDI %s\n", instr->arg);
+            printf("RDI %d\n", instr->arg);
             break;
         }
         case kWRI: {
-            printf("WRI %s\n", instr->arg);
+            printf("WRI %d\n", instr->arg);
             break;
         }                         
         case kADI: {
@@ -291,15 +363,15 @@ void printInstr(Instr* instr) {
             break;
         }     
         case kSTO: {
-            printf("STO %d\n", instr->arg);
+            printf("STO '%s'\n", instr->name);
             break;
         }                 
         case kFJP: {
-            printf("FJP %d\n", instr->arg);
+            printf("FJP %s\n", instr->name);
             break;
         }                 
         case kUJP: {
-            printf("UJP %d\n", instr->arg);
+            printf("UJP %s\n", instr->name);
             break;
         }    
         case kEQU: {
@@ -359,4 +431,11 @@ expr_t opToInstr(int op) {
         case GT:    return kGRT;
         case GTE:   return kGEQ;
     }
+}
+
+
+char* generate_label() {
+    char* label = (char*) malloc(12);
+    sprintf(label, "label_%d", label_count++);
+    return label;
 }

@@ -1,4 +1,5 @@
 #include "symbol.h"
+#include "ast.h"
 
 Symbol* make_symbol(char* name, Type* type) {
     Symbol* symbol = (Symbol*) malloc(sizeof(Symbol));
