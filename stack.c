@@ -118,6 +118,8 @@ InstrList* compile_stmt(Node* stmt) {
                 break;
             }
             case STMT_IFELSE: {
+                dbgprintf("Compiling If-Else block\n");
+
                 InstrList* list = compile_expr(node->attr);
                 code = append(code, list);
 
@@ -142,10 +144,38 @@ InstrList* compile_stmt(Node* stmt) {
                 instr = make_instr_string(kLABEL, label_after);
                 code = append_instr(code, instr);
 
-                label_count++;
                 break;
             }
             case STMT_WHILE: {
+                dbgprintf("Compiling While loop\n");
+
+                char* label_before = generate_label();
+                char* label_after = generate_label();
+
+                // Label before loop condition test
+                Instr* instr = make_instr_string(kLABEL, label_before); 
+                code = append_instr(code, instr);
+                
+                // Loop condition test
+                InstrList* list = compile_expr(node->attr);
+                code = append(code, list);
+
+                // If condition is false jump to the end                
+                instr = make_instr_string(kFJP, label_after);
+                code = append_instr(code, instr);
+
+                // If condition is true do the loop body
+                list = compile_stmt(node->body);
+                code = append(code, list);
+
+                // Jump back to the start
+                instr = make_instr_string(kUJP, label_before);
+                code = append_instr(code, instr);
+
+                // Label to the end   
+                instr = make_instr_string(kLABEL, label_after);
+                code = append_instr(code, instr);
+
                 break;
             }
             case STMT_RETURN: {
